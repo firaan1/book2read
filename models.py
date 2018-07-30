@@ -16,7 +16,13 @@ class Userlist(db.Model):
         self.username = username
         self.password = password
 
-
+class Booklist(db.Model):
+    __tablename__ = "books"
+    id = db.Column(db.Integer, primary_key = True)
+    isbn = db.Column(db.String, nullable = False)
+    title = db.Column(db.String, nullable = False)
+    author = db.Column(db.String, nullable = False)
+    year = db.Column(db.String, nullable = False)
 # class Flight(db.Model):
 #     __tablename__ = "flights"
 #     id = db.Column(db.Integer, primary_key=True)

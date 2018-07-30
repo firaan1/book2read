@@ -1,23 +1,27 @@
 {% extends "layout.html" %}
 
 {% block title %}
+Online Book Review
 {% endblock %}
 
 {% block body %}
 
-{{session['logged_in']}}
+<h1>Online Book Review</h1>
+
+<ul>
+	<li>Search for your favorite books</li>
+	<li>Read reviews of available books</li>
+	<li>Share your personal opinions</li>
+</ul>
 
 {% if session['logged_in'] %}
 
-	<h3>User already logged in</h3>
 
 {% else %}
-
-<p>Not logged in!</p>
-
-<a href="/login">Login</a>
-<a href="/register">Register</a>
-
+<div>
+	<a href="/login">Login</a>
+	<a href="/register">Register</a>
+</div>
 {% endif %}
 
 {% endblock %}
