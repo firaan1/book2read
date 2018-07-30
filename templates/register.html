@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block title %}
+{% endblock %}
+
+{% block body %}
+
+{{session['logged_in']}}
+
+{% if session['logged_in'] %}
+
+	<h3>User already logged in</h3>
+
+{% else %}
+
+
+    <h1>Register User</h1>
+    <form action="{{ url_for('register')}}" method="post">
+      <div class="form-group">
+        <input class="form-control" type="text" name="username" placeholder="User Name">
+      </div>
+      <div class="form-group">
+        <input class="form-control" type="password" name="password" placeholder="Password">
+      </div>
+      <div class="form-group">
+        <input class="form-control" type="password" name="password_retype" placeholder="Re-enter Password">
+      </div>
+      <br/>
+      <div class="form-group">
+        <button class="btn btn-primary">Register</button>
+      </div>
+    </form>
+
+{% endif %}
+{% endblock %}
