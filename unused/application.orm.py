@@ -6,8 +6,7 @@ from flask import Flask, session, render_template, request, flash
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
-from flask_sqlalchemy import SQLAlchemy
-
+from models import *
 
 
 app = Flask(__name__)
@@ -21,7 +20,6 @@ app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
-db = SQLAlchemy()
 db.init_app(app)
 
 Session(app)
@@ -33,10 +31,6 @@ Session(app)
 
 @app.route("/", methods = ["GET", "POST"])
 def index():
-    try:
-        session['logged_in']
-    except:
-        session['logged_in'] = False
     return render_template('index.html')
 
 @app.route("/test")
@@ -48,12 +42,11 @@ def test():
 @app.route("/booksearch")
 def booksearch():
     try:
-        # books = Booklist.query.all()
-        books = db.session.execute("SELECT * FROM books").fetchall()
+        books = Booklist.query.all()
     except:
         return render_template('error.html', message = "Error in accessing books database")
     return render_template('booksearch.html')
-
+    
 @app.route("/logout")
 def logout():
     session['logged_in'] = False
@@ -67,11 +60,11 @@ def login():
         password_hash = hashlib.md5(password.encode('utf-8')).hexdigest()
         # check db
         try:
-            user_id = db.session.execute("SELECT id FROM users WHERE username = :username AND password_hash = :password_hash", {'username' : username, 'password_hash' : password_hash}).fetchone()[0]
-            session['logged_in'] = user_id
+            user = Userlist.query.filter_by(username = username, password = password_hash).one()
+            session['logged_in'] = username
             return render_template('booksearch.html')
         except:
-            return render_template('error.html', message = "Incorrect username or password")
+            return render_template('error.html', message = "Error in finding user")
     else:
         if not session['logged_in']:
             return render_template('login.html')
@@ -87,12 +80,12 @@ def register():
         if not password == password_retype:
             return render_template('error.html', message = "Check retyping password")
         password_hash = hashlib.md5(password.encode('utf-8')).hexdigest()
+        session['logged_in'] = username
+        user = Userlist(username = username, password = password_hash)
         # adding user to DATABASE
         try:
-            db.session.execute("INSERT INTO users (username, password_hash) VALUES (:username, :password_hash)", {'username' : username, 'password_hash' : password_hash})
+            db.session.add(user)
             db.session.commit()
-            user_id = db.session.execute("SELECT id FROM users WHERE username = :username", {'username' : username}).fetchone()[0]
-            session['logged_in'] = user_id
         except:
             return render_template("error.html", message = "User registration error")
     return render_template("register.html")
