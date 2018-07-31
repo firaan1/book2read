@@ -11,6 +11,12 @@
 
 	<h3>User already logged in</h3>
 
+	<form action="{{ url_for('logout')}}">
+		<div class="form-group">
+			<button class="btn btn-primary">Logout</button>
+		</div>
+	</form>
+
 {% else %}
 
 

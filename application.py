@@ -2,7 +2,7 @@ import os
 import requests
 import hashlib
 
-from flask import Flask, session, render_template, request, flash
+from flask import Flask, session, render_template, request, flash, redirect
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -37,6 +37,8 @@ def index():
         session['logged_in']
     except:
         session['logged_in'] = False
+    if session['logged_in']:
+        return render_template('booksearch.html')
     return render_template('index.html')
 
 @app.route("/test")
@@ -45,18 +47,51 @@ def test():
     session['logged_in'] = False
     return str(session.get('logged_in'))
 
-@app.route("/booksearch")
+@app.route("/booksearch", methods = ["GET", "POST"])
 def booksearch():
+    if request.method == "POST":
+        book_cols = ['isbn', 'title', 'author', 'year']
+        searchcol = request.form.get('searchcol')
+        searchtag = request.form.get('searchtag')
+        searchtag = f"%{searchtag.lower()}%"
+        if searchcol not in book_cols:
+            return render_template('error.html', message="Unknown access")
+        try:
+            # books = db.session.execute('SELECT * FROM books WHERE LOWER((:searchcol)::text) LIKE :searchtag', {'searchcol' : searchcol, 'searchtag' : searchtag}).fetchone()
+            books = db.session.execute(f"SELECT * FROM books WHERE LOWER(({searchcol})::text) LIKE :searchtag", {'searchtag' : searchtag }).fetchall()
+        except:
+            return render_template('error.html', message = "Error in accessing books database")
+        return render_template('booksearch.html', books = books)
+    else:
+        return render_template('booksearch.html', books = False)
+
+@app.route("/booksearch/<int:book_id>")
+def Book(book_id):
     try:
-        # books = Booklist.query.all()
-        books = db.session.execute("SELECT * FROM books").fetchall()
+        book = db.session.execute("SELECT * FROM books WHERE id = :book_id", {"book_id" : book_id}).fetchone()
     except:
         return render_template('error.html', message = "Error in accessing books database")
-    return render_template('booksearch.html')
+    return render_template('bookinfo.html', book = book)
+
+@app.route("/booksearch/<int:book_id>/<string:book_col>")
+def Bookcol(book_id,book_col):
+    book_cols = ['isbn', 'title', 'author', 'year']
+    if book_col not in book_cols:
+        return render_template('error.html', message = 'Restricted access')
+    try:
+        col_value = db.session.execute(f"SELECT {book_col} FROM books WHERE id = :book_id", {'book_id' : book_id}).fetchone()[0]
+    except:
+        return render_template('error.html', message = "Error in accessing books database")
+    try:
+        books = db.session.execute(f"SELECT * FROM books WHERE {book_col} = :col_value", {'col_value' : col_value }).fetchall()
+    except:
+        return render_template('error.html', message = "Error in accessing books database")
+    return render_template('booksearch.html',books = books)
 
 @app.route("/logout")
 def logout():
-    session['logged_in'] = False
+    if session['logged_in']:
+        session['logged_in'] = False
     return render_template('index.html')
 
 @app.route("/login", methods = ["GET","POST"])
@@ -80,6 +115,8 @@ def login():
 
 @app.route("/register", methods = ["GET", "POST"])
 def register():
+    if session['logged_in']:
+        return render_template('booksearch.html')
     if request.method == "POST":
         username = request.form.get('username')
         password = request.form.get('password')

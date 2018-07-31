@@ -8,14 +8,11 @@ Online Book Review
 
 <h1>Online Book Review</h1>
 
-<ul>
-	<li>Search for your favorite books</li>
-	<li>Read reviews of available books</li>
-	<li>Share your personal opinions</li>
-</ul>
-
+{{ session['logged_in'] }}
+{{ book }}
 {% if session['logged_in'] %}
 
+</br>
 <form action="{{ url_for('logout')}}">
 	<div class="form-group">
 		<button class="btn btn-primary">Logout</button>
@@ -28,5 +25,4 @@ Online Book Review
 	<a href="/register">Register</a>
 </div>
 {% endif %}
-
 {% endblock %}

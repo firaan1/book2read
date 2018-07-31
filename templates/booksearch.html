@@ -15,7 +15,51 @@ Online Book Review
 <div class="container">
 	<form action="{{ url_for('booksearch')}}" method="post">
 		<div class="form-group">
+			<select class="form-control" name="searchcol">
+				<option value="isbn">isbn</option>
+				<option value="title">title</option>
+				<option value="author">author</option>
+				<option value="year">year</option>
+			</select>
+			<input class="form-control" name="searchtag" placeholder="Enter text here">
+			<button class="btn btn-primary">Search</button>
+		</div>
+	</form>
 </div>
+
+</br>
+{% if books %}
+<div class="container">
+	<div>
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>isbn</th>
+					<th>title</th>
+					<th>author</th>
+					<th>year</th>
+				</thead>
+				{% for book in books %}
+				<tbody>
+					<tr>
+						<th><a href="/booksearch/{{ book[0]}}">{{ book[1] }}</a></th>
+						<th><a href="/booksearch/{{ book[0] }}">{{ book[2] }}</th>
+						<th><a href="/booksearch/{{ book[0] }}/author">{{ book[3] }}</th>
+						<th><a href="/booksearch/{{ book[0] }}/year">{{ book[4] }}</th>
+					</tr>
+				</tbody>
+				{% endfor %}
+			</table>
+		</div>
+	</div>
+
+{% endif %}
+</br>
+<form action="{{ url_for('logout')}}">
+	<div class="form-group">
+		<button class="btn btn-primary">Logout</button>
+	</div>
+</form>
 
 {% else %}
 <div>
@@ -23,5 +67,4 @@ Online Book Review
 	<a href="/register">Register</a>
 </div>
 {% endif %}
-
 {% endblock %}
