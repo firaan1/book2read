@@ -128,6 +128,8 @@ def Book(book_id):
     except:
         return render_template('error.html', message = "Error in accessing books database")
     if request.method == "POST":
+        if not request.form.get('user_rating'):
+            return redirect( url_for(request.endpoint, book_id = book_id))
         if not user_rating:
             user_rating = request.form.get('user_rating')
             try:
