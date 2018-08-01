@@ -118,6 +118,7 @@ def booksearch():
 def Book(book_id):
     user_id = session['logged_in']
     try:
+        # book rating
         book = db.session.execute("SELECT * FROM books WHERE id = :book_id", {"book_id" : book_id}).fetchone()
         overall_rating = db.session.execute("SELECT AVG(user_rating) FROM ratings WHERE book_id = :book_id", {'book_id' : book_id}).fetchone()[0]
         user_rating = db.session.execute("SELECT AVG(user_rating) FROM ratings WHERE book_id = :book_id AND user_id = :user_id", {'book_id' : book_id, 'user_id' : user_id}).fetchone()[0]
@@ -125,31 +126,58 @@ def Book(book_id):
             overall_rating = False
         if not user_rating:
             user_rating = False
+        # book reviews
+        overall_reviews = db.session.execute("SELECT username, user_review FROM reviews JOIN users ON reviews.user_id = users.id WHERE book_id = :book_id", {'book_id' : book_id}).fetchall()
+        user_review = db.session.execute("SELECT user_review FROM reviews WHERE book_id = :book_id AND user_id = :user_id", {'book_id' : book_id, 'user_id' : user_id}).fetchone()
+        if not user_review:
+            user_review = False
+        else:
+            user_review = user_review[0]
+        if not overall_reviews:
+            overall_reviews = False
     except:
         return render_template('error.html', message = "Error in accessing books database")
     if request.method == "POST":
-        if not request.form.get('user_rating'):
-            return redirect( url_for(request.endpoint, book_id = book_id))
-        if not user_rating:
-            user_rating = request.form.get('user_rating')
+        if request.form.get('buttonsrc') == "deletereview":
             try:
-                db.session.execute("INSERT INTO ratings (book_id, user_id, user_rating) VALUES (:book_id, :user_id, :user_rating)", {'book_id' : book_id, 'user_id' : user_id, 'user_rating' : user_rating})
+                db.session.execute("DELETE FROM reviews WHERE user_id = :user_id AND book_id = :book_id", {'user_id' : user_id, 'book_id' : book_id})
                 db.session.commit()
+                user_review = False
             except:
                 return render_template('error.html', message = "Error in accessing books database")
+        elif request.form.get('buttonsrc') == "review":
+            user_review = request.form.get('user_review')
+            try:
+                db.session.execute("INSERT INTO reviews (book_id, user_id, user_review) VALUES (:book_id, :user_id, :user_review)", {'book_id' : book_id, 'user_id' : user_id, 'user_review' : user_review})
+                db.session.commit()
+            except:
+                render_template('error.html', message = "Error in accessing books database")
         else:
-            user_rating = request.form.get('user_rating')
-            try:
-                db.session.execute("UPDATE ratings SET user_rating = :user_rating WHERE user_id = :user_id AND book_id = :book_id", {'user_id' : user_id, 'book_id' : book_id, 'user_rating' : user_rating})
-                db.session.commit()
-            except:
-                return render_template('error.html', message = "Error in accessing books database")
+            if not request.form.get('user_rating'):
+                return redirect( url_for(request.endpoint, book_id = book_id))
+            if not user_rating:
+                user_rating = request.form.get('user_rating')
+                try:
+                    db.session.execute("INSERT INTO ratings (book_id, user_id, user_rating) VALUES (:book_id, :user_id, :user_rating)", {'book_id' : book_id, 'user_id' : user_id, 'user_rating' : user_rating})
+                    db.session.commit()
+                except:
+                    return render_template('error.html', message = "Error in accessing books database")
+            else:
+                user_rating = request.form.get('user_rating')
+                try:
+                    db.session.execute("UPDATE ratings SET user_rating = :user_rating WHERE user_id = :user_id AND book_id = :book_id", {'user_id' : user_id, 'book_id' : book_id, 'user_rating' : user_rating})
+                    db.session.commit()
+                except:
+                    return render_template('error.html', message = "Error in accessing books database")
         overall_rating = db.session.execute("SELECT AVG(user_rating) FROM ratings WHERE book_id = :book_id", {'book_id' : book_id}).fetchone()[0]
+        overall_reviews = db.session.execute("SELECT username, user_review FROM reviews JOIN users ON reviews.user_id = users.id WHERE book_id = :book_id", {'book_id' : book_id}).fetchall()
+        if not overall_reviews:
+            overall_reviews = False
     if user_rating:
         user_rating = round(int(user_rating), 1)
     if overall_rating:
         overall_rating = round(overall_rating, 1)
-    return render_template('bookinfo.html', book = book, user_rating = user_rating, overall_rating = overall_rating)
+    return render_template('bookinfo.html', book = book, user_rating = user_rating, overall_rating = overall_rating, user_review = user_review, overall_reviews = overall_reviews)
 
 @app.route("/booksearch/<int:book_id>/<string:book_col>")
 def Bookcol(book_id,book_col):

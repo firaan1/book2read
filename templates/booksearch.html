@@ -29,14 +29,15 @@ Online Book Review
 </br>
 {% if books %}
 <div class="container">
-	<div>
-		<table class="table table-hover">
+	<div class="table-wrapper-scroll-y scrolltable">
+		<table class="table table-hover table-bordered">
 			<thead>
 				<tr>
 					<th>isbn</th>
 					<th>title</th>
 					<th>author</th>
 					<th>year</th>
+				</tr>
 				</thead>
 				{% for book in books %}
 				<tbody>
