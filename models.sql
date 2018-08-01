@@ -10,3 +10,17 @@ CREATE TABLE users (
   username VARCHAR NOT NULL,
   password_hash VARCHAR NOT NULL
 );
+
+CREATE TABLE reviews (
+  id SERIAL PRIMARY KEY,
+  book_id INTEGER REFERENCES books,
+  user_id INTEGER REFERENCES users,
+  reviews VARCHAR NOT NULL
+);
+
+CREATE TABLE ratings (
+  id SERIAL PRIMARY KEY,
+  book_id INTEGER REFERENCES books,
+  user_id INTEGER REFERENCES users,
+  user_rating INTEGER NOT NULL
+);

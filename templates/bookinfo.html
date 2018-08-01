@@ -10,7 +10,37 @@ Online Book Review
 
 {{ session['logged_in'] }}
 {{ book }}
-{% if session['logged_in'] %}
+{{ user_rating }}
+{{ overall_rating }}
+
+</br>
+<div class="container">
+		<h3>Book Info</h3>
+		<ul class="list-group">
+			<li>Title: <a href="/booksearch/{{ book[0] }}">{{ book[2] }}</a></li>
+			<li>Author : <a href="/booksearch/{{ book[0] }}/author">{{ book[3] }}</a></li>
+			<li>Year : <a href="/booksearch/{{ book[0] }}/year">Year : {{ book[4] }}</a></li>
+			<li>ISBN : <a href="/booksearch/{{ book[0]}}">{{ book[1] }}</a></li>
+		</ul>
+</div>
+<div class="container">
+	<h3>Rating</h3>
+	<form action="{{ url_for('Book', book_id = book[0])}}" method="post">
+		<select class="form-group" name="user_rating">
+			{% set counts = [1,2,3,4,5] %}
+			<option value="{{i}}" selected disabled>Select your rating</option>
+			{% for i in counts %}
+				<option value="{{i}}">{{i}}</option>
+			{% endfor %}
+		</select>
+		<h4>Your Rating: {% if user_rating %}{{ user_rating }}{% else %}-{% endif %} / 5</h4>
+		<h4>Overall Rating: {% if overall_rating %}{{ overall_rating }}{% else %}-{% endif %} / 5</h4>
+		<div class="form-group">
+			<button name="buttonsrc" value="rate" class="btn btn-primary">Rate</button>
+		</div>
+	</form>
+</div>
+
 
 </br>
 <form action="{{ url_for('logout')}}">
@@ -19,10 +49,4 @@ Online Book Review
 	</div>
 </form>
 
-{% else %}
-<div>
-	<a href="/login">Login</a>
-	<a href="/register">Register</a>
-</div>
-{% endif %}
 {% endblock %}
