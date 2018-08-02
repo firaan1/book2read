@@ -5,7 +5,6 @@ Online Book Review
 {% endblock %}
 
 {% block body %}
-
 <h1>Online Book Review</h1>
 
 <ul>
@@ -14,7 +13,7 @@ Online Book Review
 	<li>Share your personal opinions</li>
 </ul>
 
-
+{{ a }}
 {% if session['logged_in'] %}
 
 <form action="{{ url_for('logout')}}">
