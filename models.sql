@@ -5,6 +5,7 @@ CREATE TABLE books (
     author VARCHAR NOT NULL,
     year INTEGER NOT NULL
 );
+
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   username VARCHAR NOT NULL,
@@ -22,5 +23,13 @@ CREATE TABLE ratings (
   id SERIAL PRIMARY KEY,
   book_id INTEGER REFERENCES books,
   user_id INTEGER REFERENCES users,
+  user_rating INTEGER NOT NULL
+);
+
+CREATE TABLE comments (
+  id SERIAL PRIMARY KEY,
+  book_id INTEGER REFERENCES books,
+  user_id INTEGER REFERENCES users,
+  user_review VARCHAR NOT NULL,
   user_rating INTEGER NOT NULL
 );

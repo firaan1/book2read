@@ -5,6 +5,15 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
     </head>
     <body>
+      <div class="container">
+        <form action="" method="post">
+          <div class="form-group">
+            <button class="btn btn-primary" name="btn_home" value="btn_home">Home</button>
+            <button class="btn btn-primary" name="btn_search" value="btn_search">Search</button>
+            <button id="btn_logout" class="btn btn-primary" name="btn_logout" value="btn_logout">Logout</button>
+          </div>
+        </form>
+      </div>
         <div class="container">
             {% block body %}
             {% endblock %}

@@ -1,8 +1,9 @@
 import os
 import requests
 import hashlib
+import json
 
-from flask import Flask, session, render_template, request, flash, redirect, url_for
+from flask import Flask, session, render_template, request, flash, redirect, url_for, abort
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -29,6 +30,9 @@ db.init_app(app)
 
 Session(app)
 
+# goodread
+goodread_key = os.getenv("key")
+
 @app.before_request
 def before_request():
     try:
@@ -40,17 +44,28 @@ def before_request():
         if request.endpoint not in ['index', 'login', 'register']:
             return render_template('index.html')
     else:
-        if request.endpoint in ['index', 'login', 'register']:
-            return render_template('booksearch.html')
+        if request.endpoint in ['login', 'register']:
+             return render_template('index.html')
+    if request.method == "POST":
+        if request.form.get('btn_home'):
+            return render_template('index.html')
+        if request.form.get('btn_search'):
+            if session['logged_in']:
+                return render_template('booksearch.html')
+            else:
+                return render_template('index.html')
+        if request.form.get('btn_logout'):
+            session['logged_in'] = False
+            return render_template('index.html')
 
 
 @app.route('/', methods = ['GET', 'POST'])
 def index():
     return render_template('index.html')
 
-@app.route('/home', methods = ['GET', 'POST'])
-def home():
-    return render_template('index.html')
+# @app.route('/home', methods = ['GET', 'POST'])
+# def home():
+#     return render_template('index.html')
 
 @app.route("/login", methods = ["GET","POST"])
 def login():
@@ -117,13 +132,21 @@ def booksearch():
 @app.route("/booksearch/<int:book_id>", methods = ["GET", "POST"])
 def Book(book_id):
     user_id = session['logged_in']
+    gread_dict = {}
     try:
         # book rating
         book = db.session.execute("SELECT * FROM books WHERE id = :book_id", {"book_id" : book_id}).fetchone()
-        overall_rating = db.session.execute("SELECT AVG(user_rating) FROM ratings WHERE book_id = :book_id", {'book_id' : book_id}).fetchone()[0]
+        # goodread data
+        gread = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": goodread_key, "isbns": book[1]})
+        if gread.status_code == 200:
+            gread_dict = json.loads(gread.content)
+        # our database
+        # overall_rating = db.session.execute("SELECT AVG(user_rating) FROM ratings WHERE book_id = :book_id", {'book_id' : book_id}).fetchone()[0]
+        overall_rating = db.session.execute("SELECT AVG(user_rating),COUNT(user_rating) FROM ratings WHERE book_id = :book_id", {'book_id' : book_id}).fetchone()
         user_rating = db.session.execute("SELECT AVG(user_rating) FROM ratings WHERE book_id = :book_id AND user_id = :user_id", {'book_id' : book_id, 'user_id' : user_id}).fetchone()[0]
-        if not overall_rating:
+        if not overall_rating[0]:
             overall_rating = False
+            overall_rating_list = False
         if not user_rating:
             user_rating = False
         # book reviews
@@ -148,7 +171,8 @@ def Book(book_id):
         elif request.form.get('buttonsrc') == "review":
             user_review = request.form.get('user_review')
             try:
-                db.session.execute("INSERT INTO reviews (book_id, user_id, user_review) VALUES (:book_id, :user_id, :user_review)", {'book_id' : book_id, 'user_id' : user_id, 'user_review' : user_review})
+                # preventing refresh post
+                db.session.execute("INSERT INTO reviews (book_id, user_id, user_review) SELECT :book_id, :user_id, :user_review WHERE (SELECT COUNT(*) FROM reviews WHERE book_id = :book_id AND user_id = :user_id) = 0", {'book_id' : book_id, 'user_id' : user_id, 'user_review' : user_review})
                 db.session.commit()
             except:
                 render_template('error.html', message = "Error in accessing books database")
@@ -158,7 +182,8 @@ def Book(book_id):
             if not user_rating:
                 user_rating = request.form.get('user_rating')
                 try:
-                    db.session.execute("INSERT INTO ratings (book_id, user_id, user_rating) VALUES (:book_id, :user_id, :user_rating)", {'book_id' : book_id, 'user_id' : user_id, 'user_rating' : user_rating})
+                    # preventing refresh post
+                    db.session.execute("INSERT INTO ratings (book_id, user_id, user_rating) SELECT :book_id, :user_id, :user_rating WHERE (SELECT COUNT(*) FROM ratings WHERE book_id = :book_id AND user_id = :user_id) = 0", {'book_id' : book_id, 'user_id' : user_id, 'user_rating' : user_rating})
                     db.session.commit()
                 except:
                     return render_template('error.html', message = "Error in accessing books database")
@@ -169,15 +194,24 @@ def Book(book_id):
                     db.session.commit()
                 except:
                     return render_template('error.html', message = "Error in accessing books database")
-        overall_rating = db.session.execute("SELECT AVG(user_rating) FROM ratings WHERE book_id = :book_id", {'book_id' : book_id}).fetchone()[0]
+        # overall_rating = db.session.execute("SELECT user_rating FROM ratings WHERE book_id = :book_id", {'book_id' : book_id}).fetchone()[0]
+        overall_rating = db.session.execute("SELECT AVG(user_rating), COUNT(user_rating) FROM ratings WHERE book_id = :book_id", {'book_id' : book_id}).fetchone()
         overall_reviews = db.session.execute("SELECT username, user_review FROM reviews JOIN users ON reviews.user_id = users.id WHERE book_id = :book_id", {'book_id' : book_id}).fetchall()
         if not overall_reviews:
             overall_reviews = False
     if user_rating:
         user_rating = round(int(user_rating), 1)
     if overall_rating:
-        overall_rating = round(overall_rating, 1)
-    return render_template('bookinfo.html', book = book, user_rating = user_rating, overall_rating = overall_rating, user_review = user_review, overall_reviews = overall_reviews)
+        if overall_rating[0]:
+            overall_rating_list = []
+            for o in overall_rating:
+                overall_rating_list.append(o)
+            overall_rating_list[0] = round(overall_rating_list[0],2)
+    if not gread_dict:
+        gread_rating = False
+    else:
+        gread_rating = gread_dict['books'][0]
+    return render_template('bookinfo.html', book = book, user_rating = user_rating, overall_rating = overall_rating_list, user_review = user_review, overall_reviews = overall_reviews, gread_rating = gread_rating)
 
 @app.route("/booksearch/<int:book_id>/<string:book_col>")
 def Bookcol(book_id,book_col):
@@ -193,3 +227,46 @@ def Bookcol(book_id,book_col):
     except:
         return render_template('error.html', message = "Error in accessing books database")
     return render_template('booksearch.html',books = books)
+
+@app.route("/api/<string:isbn_code>")
+def BookAPI(isbn_code):
+    bookapi = {}
+    try:
+        book_info1 = db.session.execute("SELECT * FROM books WHERE isbn = :isbn", {'isbn' : isbn_code}).fetchone()
+        if book_info1:
+            book_id, isbn, title, author, year = book_info1
+            gread = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": goodread_key, "isbns": isbn})
+            if gread.status_code == 200:
+                gread_dict = json.loads(gread.content)['books'][0]
+                gread_review_count = gread_dict['reviews_count']
+                gread_average_score = gread_dict['average_rating']
+                gread_rating_count = gread_dict['ratings_count']
+            else:
+                gread_review_count = gread_average_score = gread_rating_count = "-"
+            review_count = db.session.execute("SELECT COUNT(user_review) FROM reviews WHERE book_id = :book_id", {'book_id' : book_id}).fetchone()
+            average_score, rating_count = db.session.execute("SELECT AVG(user_rating), COUNT(user_rating) FROM ratings WHERE book_id = :book_id", {'book_id' : book_id}).fetchone()
+            if not average_score:
+                average_score = ""
+            else:
+                average_score = str(round(average_score, 2))
+            if review_count:
+                review_count = review_count[0]
+            bookapi = {
+                "title" : title,
+                "author" : author,
+                "year" : year,
+                "isbn" : isbn,
+                "review_count" : review_count,
+                "average_score" : average_score,
+                "rating_count" : rating_count,
+                "goodread_review_count": gread_review_count,
+                "goodread_average_score" : gread_average_score,
+                "goodread_rating_count" : gread_rating_count
+            }
+    except:
+        return render_template('error.html', message = "Error in accessing books database")
+    if bookapi:
+        return str(bookapi)
+    else:
+        abort(404)
+        return render_template('error.html', message = "Invalid ISBN Number"), 404

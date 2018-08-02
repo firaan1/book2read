@@ -40,8 +40,9 @@ Online Book Review
 
 		<h4>Your Rating: {% if user_rating %}{{ user_rating }}{% else %}-{% endif %} / 5</h4>
 
-		<h4>Overall Rating: {% if overall_rating %}{{ overall_rating }}{% else %}-{% endif %} / 5</h4>
+		<h4>Overall Rating: {% if overall_rating %}{{ overall_rating[0] }}{% else %}-{% endif %} / 5 ({% if overall_rating %}{{ overall_rating[1] }}{% else %}0{% endif %})</h4>
 
+		<h4>Goodread rating: {% if gread_rating %}{{ gread_rating['average_rating'] }}{% else %}-{% endif %} / 5 ({% if gread_rating %}{{ gread_rating['ratings_count'] }}{% else %}0{% endif %})</h4>
 		<div class="form-group">
 			<button name="buttonsrc" value="rate" class="btn btn-primary">Rate</button>
 		</div>
@@ -66,6 +67,7 @@ Online Book Review
 		{% endif %}
 		</br>
 		{% if overall_reviews %}
+		<h4>Total Reviews: {{ overall_reviews | count }}</h4>
 		<div class="table-wrapper-scroll-y scrolltable">
 			<table class="table table-hover table-bordered">
 				<thead>
