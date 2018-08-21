@@ -35,7 +35,8 @@
                     <span class="glyphicon glyphicon-search"></span> Search </button>
                 </div>
                 <div class="col-sm-1 text-right">
-                      <span class="glyphicon glyphicon-user"></span> <strong> benazir</strong>
+                      <!-- <span class="glyphicon glyphicon-user"></span> <strong> benazir</strong> -->
+                      <span class="glyphicon glyphicon-user"></span> <strong>{% if session['logged_in_name'] %}{{session['logged_in_name']}}{% endif %}</strong>
                 </div>
                 <div class="col-sm-1 pull-right">
                   <button id="btn_logout" class="btn btn-danger" name="btn_logout" value="btn_logout">

@@ -76,6 +76,7 @@ def login():
         try:
             user_id = db.session.execute("SELECT id FROM users WHERE username = :username AND password_hash = :password_hash", {'username' : username, 'password_hash' : password_hash}).fetchone()[0]
             session['logged_in'] = user_id
+            session['logged_in_name'] = username
             return render_template('booksearch.html')
         except:
             return render_template('error.html', message = "Incorrect username or password")
@@ -84,6 +85,7 @@ def login():
 @app.route("/logout")
 def logout():
     session['logged_in'] = False
+    session['logged_in_name'] = False
     return render_template('index.html')
 
 @app.route("/register", methods = ["GET", "POST"])
@@ -103,6 +105,7 @@ def register():
             db.session.commit()
             user_id = db.session.execute("SELECT id FROM users WHERE username = :username", {'username' : username}).fetchone()[0]
             session['logged_in'] = user_id
+            session['logged_in_name'] = username
             return render_template('booksearch.html')
         except:
             return render_template("error.html", message = "User registration error")
