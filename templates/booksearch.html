@@ -6,35 +6,44 @@ Online Book Review
 
 {% block body %}
 
-<h1>Online Book Review</h1>
-
-
 <div class="container">
-	<form action="{{ url_for('booksearch')}}" method="post">
+	<h3 class="text-center"> Search Your Books</h3>
+	<form class="form-horizontal" action="{{ url_for('booksearch')}}" method="post">
 		<div class="form-group">
-			<select class="form-control" name="searchcol">
-				<option value="isbn">isbn</option>
-				<option value="title">title</option>
-				<option value="author">author</option>
-				<option value="year">year</option>
-			</select>
-			<input class="form-control" name="searchtag" placeholder="Enter text here">
-			<button class="btn btn-primary">Search</button>
+			<label class="control-label col-sm-4">Search by Type:</label>
+					<div class="col-sm-6">
+						<select class="form-control" name="searchcol">
+							<option value="isbn">Isbn</option>
+							<option value="title">Title</option>
+							<option value="author">Author</option>
+							<option value="year">Year</option>
+						</select>
+					</div>
 		</div>
+		<div class="form-group">
+			<label class="control-label col-sm-4">Search by Name:</label>
+			<div class="col-sm-6">
+				<input class="form-control" name="searchtag" placeholder="Enter text here">
+			</div>
+		</div>
+		<div class="form-group">
+ 		 <div class="col-sm-offset-4 col-sm-10">
+ 			 <button type="submit" class="btn btn-success">Search</button>
+ 		 </div>
+ 	 </div>
 	</form>
 </div>
 
 </br>
 {% if books %}
-<div class="container">
 	<div class="table-wrapper-scroll-y scrolltable">
-		<table class="table table-hover table-bordered">
+		<table class="table table-hover table-bordered tab">
 			<thead>
 				<tr>
-					<th>isbn</th>
-					<th>title</th>
-					<th>author</th>
-					<th>year</th>
+					<th>Isbn</th>
+					<th>Title</th>
+					<th>Author</th>
+					<th>Year</th>
 				</tr>
 				</thead>
 				{% for book in books %}
@@ -49,14 +58,7 @@ Online Book Review
 				{% endfor %}
 			</table>
 		</div>
-	</div>
 
 {% endif %}
-</br>
-<form action="{{ url_for('logout')}}">
-	<div class="form-group">
-		<button class="btn btn-primary">Logout</button>
-	</div>
-</form>
 
 {% endblock %}

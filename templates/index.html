@@ -1,4 +1,7 @@
 {% extends "layout.html" %}
+<div class="header">
+  <h1><b>Online Book Review</b></h1>
+</div>
 
 {% block title %}
 Online Book Review
@@ -16,11 +19,6 @@ Online Book Review
 {{ a }}
 {% if session['logged_in'] %}
 
-<form action="{{ url_for('logout')}}">
-	<div class="form-group">
-		<button class="btn btn-primary">Logout</button>
-	</div>
-</form>
 
 {% else %}
 <style>
@@ -30,9 +28,10 @@ Online Book Review
 </style>
 
 <div>
-	<a href="/login">Login</a>
-	<a href="/register">Register</a>
+	<a href="/login" class="btn btn-success">Login</a>
+	<a href="/register" class="btn btn-warning">Register</a>
 </div>
+
 {% endif %}
 
 {% endblock %}

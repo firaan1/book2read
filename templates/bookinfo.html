@@ -6,7 +6,7 @@ Online Book Review
 
 {% block body %}
 
-<h1>Online Book Review</h1>
+<h2>Book Info</h2>
 
 {{ session['logged_in'] }}
 {{ book }}
@@ -15,22 +15,18 @@ Online Book Review
 
 </br>
 <div class="container">
-		<h3>Book Info</h3>
 		<ul class="list-group">
 			<li>Title: <a href="/booksearch/{{ book[0] }}">{{ book[2] }}</a></li>
 			<li>Author : <a href="/booksearch/{{ book[0] }}/author">{{ book[3] }}</a></li>
 			<li>Year : <a href="/booksearch/{{ book[0] }}/year">Year : {{ book[4] }}</a></li>
 			<li>ISBN : <a href="/booksearch/{{ book[0]}}">{{ book[1] }}</a></li>
 		</ul>
-</div>
-
-<div class="container">
 
 	<form action="{{ url_for('Book', book_id = book[0])}}" method="post">
 
-		<h3>Rating</h3>
-
-		<select class="form-group" name="user_rating">
+		<h3> Share Your Ratings</h3>
+		<div class="col-md-6">
+		<select class="form-group form-control col-sm-3"name="user_rating">
 			{% set counts = [1,2,3,4,5] %}
 			<option value="{{i}}" selected disabled>Select your rating</option>
 			{% for i in counts %}
@@ -44,7 +40,7 @@ Online Book Review
 
 		<h4>Goodread rating: {% if gread_rating %}{{ gread_rating['average_rating'] }}{% else %}-{% endif %} / 5 ({% if gread_rating %}{{ gread_rating['ratings_count'] }}{% else %}0{% endif %})</h4>
 		<div class="form-group">
-			<button name="buttonsrc" value="rate" class="btn btn-primary">Rate</button>
+			<button name="buttonsrc" value="rate" class="btn btn-info">Rate</button>
 		</div>
 
 		</br>
@@ -60,43 +56,36 @@ Online Book Review
 		</div>
 		{% else %}
 		<h4>Your Review: </h4>
-		<p>{{ user_review }}</p>
-		<div class="form-group">
-			<button name="buttonsrc" value="deletereview" class="btn btn-primary">Delete</button>
+		<div class="well"rows="3" cols="50">{{ user_review }}</div>
+		<div class="form-group pull-right">
+			<button name="buttonsrc" value="deletereview" class="btn btn-danger	glyphicon glyphicon-trash "></button>
 		</div>
 		{% endif %}
 		</br>
 		{% if overall_reviews %}
 		<h4>Total Reviews: {{ overall_reviews | count }}</h4>
-		<div class="table-wrapper-scroll-y scrolltable">
-			<table class="table table-hover table-bordered">
-				<thead>
-					<tr>
-						<th>User</th>
-						<th>Review</th>
-					</tr>
-				</thead>
-				<tbody>
-					{% for review in overall_reviews %}
-					<tr>
-						<th>{{review[0]}}</th>
-						<th>{{review[1]}}</th>
-					</tr>
-					{% endfor %}
-				</tbody>
-			</table>
+
+	{% for review in overall_reviews %}
+		<div class="col-sm-2">
+			<div class="thumbnail">
+				<img class="img-responsive user-photo" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png">
+			</div>
 		</div>
+		<div class="col-sm-10">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<strong>{{review[0]}}</strong>
+				</div>
+				<div class="panel-body">
+					{{review[1]}}
+				</div>
+			</div>
+		</div>
+
+			{% endfor %}
+
 		{% endif %}
 	</form>
 
-</div>
-
-
-</br>
-<form action="{{ url_for('logout')}}">
-	<div class="form-group">
-		<button class="btn btn-primary">Logout</button>
-	</div>
-</form>
 
 {% endblock %}
