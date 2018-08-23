@@ -16,7 +16,6 @@
     </head>
     <body>
 
-
       <div class="header">
         <h1><b>Online Book Review</b></h1>
       </div>
@@ -27,21 +26,23 @@
             <form action="" method="post">
               <div class="form-group">
                 <div class="col-sm-1">
-                  <button class="btn btn-primary" name="btn_home" value="btn_home">
-                    <span class="glyphicon glyphicon-home"></span> Home </button>
+                  <a href="{{ url_for('index') }}" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-home"></span> Home </a>
                 </div>
                 <div class="col-sm-8">
-                  <button class="btn btn-info" name="btn_search" value="btn_search">
-                    <span class="glyphicon glyphicon-search"></span> Search </button>
+                  <a href="{{ url_for('booksearch') }}" class="btn btn-info">
+                    <span class="glyphicon glyphicon-search"></span> Search </a>
                 </div>
                 <div class="col-sm-1 text-right">
-                      <!-- <span class="glyphicon glyphicon-user"></span> <strong> benazir</strong> -->
                       <span class="glyphicon glyphicon-user"></span> <strong>{% if session['logged_in_name'] %}{{session['logged_in_name']}}{% endif %}</strong>
                 </div>
+                {% if session['logged_in'] %}
                 <div class="col-sm-1 pull-right">
-                  <button id="btn_logout" class="btn btn-danger" name="btn_logout" value="btn_logout">
-                    <span class="glyphicon glyphicon-off"></span> Logout </button>
-              </div>
+                  <a href="{{ url_for('logout') }}" class="btn btn-danger">
+                    <span class="glyphicon glyphicon-off"></span> Logout </a>
+                </div>
+                {% endif %}
+            </div>
             </form>
         </div>
     </div>
