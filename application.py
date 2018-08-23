@@ -40,22 +40,22 @@ def before_request():
             session['logged_in'] = False
     except:
         session['logged_in'] = False
-    if request.method == "POST":
-        if request.form.get('btn_home'):
-            return render_template('index.html')
-        if request.form.get('btn_search'):
-            if session['logged_in']:
-                return render_template('booksearch.html')
-            else:
-                return render_template('index.html')
-        if request.form.get('btn_logout'):
-            return redirect(url_for('logout'))
-    if not session['logged_in']:
-        if request.endpoint not in ['index', 'login', 'register']:
-            return render_template('index.html')
-    else:
-        if request.endpoint in ['login', 'register']:
-             return render_template('index.html')
+    # if request.method == "POST":
+    #     if request.form.get('btn_home'):
+    #         return render_template('index.html')
+    #     if request.form.get('btn_search'):
+    #         if session['logged_in']:
+    #             return render_template('booksearch.html')
+    #         else:
+    #             return render_template('index.html')
+    #     if request.form.get('btn_logout'):
+    #         return redirect(url_for('logout'))
+    # if not session['logged_in']:
+    #     if request.endpoint not in ['index', 'login', 'register']:
+    #         return render_template('index.html')
+    # else:
+    #     if request.endpoint in ['login', 'register']:
+    #          return render_template('index.html')
 
 
 @app.route('/', methods = ['GET', 'POST'])
