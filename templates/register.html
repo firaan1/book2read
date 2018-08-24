@@ -11,7 +11,7 @@
               <div class="main-div">
                  <h4>User Register</h4>
                       <div class="form-group">
-                          <input  type="text" class="form-control"  name="username" placeholder="User Name">
+                          <input  type="text" class="form-control"  name="username" placeholder="User Name" autofocus>
                       </div>
                       <div class="form-group">
                           <input type="password" class="form-control" name="password" placeholder="Password">
@@ -20,6 +20,9 @@
                         <input class="form-control" type="password" name="password_retype" placeholder="Re-enter Password">
                       </div>
                       <button  class="btn btn-primary">Register</button>
+                      <div class="register">
+                        <a href="{{ url_for('login')}}">Login</a>
+                      </div>
                   </div>
               </div>
         </div>

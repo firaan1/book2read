@@ -1,3 +1,4 @@
+/* login form using https://bootsnipp.com/snippets/featured/login-form  */
 .header{
   background-color:#e5e5e5;
   padding:15px;
@@ -9,7 +10,6 @@
   margin-top: 10px;
 }
 
-.form-heading { color:#fff; font-size:23px;}
 .login-form .form-control {
   background: #f7f7f7 none repeat scroll 0 0;
   border: 1px solid #d4d4d4;
@@ -87,3 +87,6 @@ thead{
 	border-right-color:#ddd;
 	border-width:8px;
 }
+
+.scrolltable { margin-top: 20px; height: 450px; overflow: auto; }
+th { text-align: left }
