@@ -2,18 +2,10 @@
 <html>
     <head>
         <title>{% block title %}{% endblock %}</title>
-        <!-- <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/bootstrap.min.css')}}">
-        <script src="{{url_for('static', filename='js/jquery-3.2.1.slim.min.js')}}"></script>
-        <script src="{{url_for('static', filename='js/popper.min.js')}}" ></script>
-        <script src="{{url_for('static', filename='js/bootstrap.min.js')}}" ></script> -->
+          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+          <link rel="stylesheet" href="{{ url_for('static', filename='css/mystyles.css') }}">
 
-        <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> -->
-
-          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-          <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}"> -->
     </head>
     <body>
 
@@ -23,29 +15,33 @@
 
 
       <div class="container up">
-         <div class="row">
-            <form action="" method="post">
-              <div class="form-group">
-                <div class="col-sm-1">
+        <form action="" method="post">
+          <div class="form-group">
+            <div class="row">
+                <div class="col">
                   <a href="{{ url_for('index') }}" class="btn btn-primary">
-                    <span class="glyphicon glyphicon-home"></span> Home </a>
+                    <i class="fa fa-home" aria-hidden="true"></i> Home </a>
                 </div>
-                <div class="col-sm-8">
+                <div class="col">
                   <a href="{{ url_for('booksearch') }}" class="btn btn-info">
-                    <span class="glyphicon glyphicon-search"></span> Search </a>
+                    <i class="fa fa-search" aria-hidden="true"></i> Search </a>
                 </div>
-                <div class="col-sm-1 text-right">
-                      <span class="glyphicon glyphicon-user"></span> <strong>{% if session['logged_in_name'] %}{{session['logged_in_name']}}{% endif %}</strong>
+                <div class="col text-right">
+                  {% if session['logged_in_name'] %}
+                    <i class="fa fa-user-circle-o" aria-hidden="true"></i><strong> {{session['logged_in_name']}} </strong>
+                  {% else %}
+                    <i class="fa fa-user-circle" aria-hidden="true"></i>
+                  {% endif %}
                 </div>
                 {% if session['logged_in'] %}
-                <div class="col-sm-1 pull-right">
+                <div class="pull-right">
                   <a href="{{ url_for('logout') }}" class="btn btn-danger">
                     <span class="glyphicon glyphicon-off"></span> Logout </a>
                 </div>
                 {% endif %}
             </div>
-            </form>
         </div>
+      </form>
     </div>
         <div class="container cont-body up">
             {% block body %}
@@ -61,94 +57,6 @@ th { text-align: left }
     </style>
 
 <style>
-.header{
-  background-color:#e5e5e5;
-  padding:15px;
-  text-align:center;
-  font-family: serif;
-  color: black;
-}
-.up{
-  margin-top: 10px;
-}
 
-.form-heading { color:#fff; font-size:23px;}
-.login-form .form-control {
-  background: #f7f7f7 none repeat scroll 0 0;
-  border: 1px solid #d4d4d4;
-  border-radius: 4px;
-  font-size: 14px;
-  height: 50px;
-  line-height: 50px;
-}
-.main-div {
-  background: #f7f7f7 none repeat scroll 0 0;
-  border-radius: 2px;
-  margin: 10px auto 30px;
-  max-width: 38%;
-  padding: 50px 70px 70px 71px;
-}
-
-.login-form .form-group {
-  margin-bottom:10px;
-}
-.login-form{ text-align:center;}
-.register a {
-  margin-top: 20px;
-  color: #777777;
-  font-size: 14px;
-  text-decoration: underline;
-
-}
-.login-form  .btn.btn-primary {
-  background: #f0ad4e none repeat scroll 0 0;
-  border-color: #f0ad4e;
-  color: #ffffff;
-  font-size: 14px;
-  width: 100%;
-  height: 50px;
-  line-height: 50px;
-  padding: 0;
-}
-.cont-body{
-  border-style: solid;
-  border-radius: 1px;
-  border-color: #e5e5e5;
-  background-color: #e5e5e5;
-}
-.tab{
-  background-color: #f7f7f7;
-}
-thead{
-  background-color: #fff;
-}
-.thumbnail {
-    padding:0px;
-}
-.panel {
-	position:relative;
-}
-.panel>.panel-heading:after,.panel>.panel-heading:before{
-	position:absolute;
-	top:11px;left:-16px;
-	right:100%;
-	width:0;
-	height:0;
-	display:block;
-	content:" ";
-	border-color:transparent;
-	border-style:solid solid outset;
-	pointer-events:none;
-}
-.panel>.panel-heading:after{
-	border-width:7px;
-	border-right-color:#f7f7f7;
-	margin-top:1px;
-	margin-left:2px;
-}
-.panel>.panel-heading:before{
-	border-right-color:#ddd;
-	border-width:8px;
-}
 </style>
 </html>
