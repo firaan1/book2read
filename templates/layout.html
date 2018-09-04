@@ -21,17 +21,14 @@
           <div class="form-group">
             <div class="row">
                 <div class="col-xs-1">
-                <!-- <div class="col col-sm-1"> -->
                   <a href="{{ url_for('index') }}" class="btn btn-dark">
                     <i class="fas fa-home"></i> Home </a>
                 </div>
                 <div class="col-xs-1">
-                <!-- <div class="col col-sm-8"> -->
                   <a href="{{ url_for('booksearch') }}" class="btn btn-dark">
                     <i class="fas fa-search"></i> Search </a>
                 </div>
                 <div class="col text-right">
-                <!-- <div class="col col-sm-1 text-right"> -->
                   {% if session['logged_in_name'] %}
                     <i class="fas fa-user-circle"></i><strong> {{session['logged_in_name']}} </strong>
                   {% else %}
@@ -40,7 +37,6 @@
                 </div>
                 {% if session['logged_in'] %}
                 <div class="col-xs-1 pull-right">
-                <!-- <div class="pull-right"> -->
                   <a href="{{ url_for('logout') }}" class="btn btn-danger">
                     <i class="fas fa-sign-out-alt"></i> Logout </a>
                 </div>

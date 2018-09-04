@@ -17,33 +17,34 @@ Online Book Review
 			<li>ISBN : <a href="/booksearch/{{ book[0]}}">{{ book[1] }}</a></li>
 		</ul>
 
+	<hr>
 	<form action="{{ url_for('Book', book_id = book[0])}}" method="post">
 
-		<h3> Share Your Ratings</h3>
-		<div class="col-md-6">
-		<select class="form-group form-control col-sm-3"name="user_rating">
+		<h4> Share Your Ratings</h4>
+		<div class="col">
+		<select class="form-group form-control col"name="user_rating">
 			{% set counts = [1,2,3,4,5] %}
 			<option value="{{i}}" selected disabled>Select your rating</option>
 			{% for i in counts %}
 				<option value="{{i}}">{{i}}</option>
 			{% endfor %}
 		</select>
-
-		<h4>Your Rating: {% if user_rating %}{{ user_rating }}{% else %}-{% endif %} / 5</h4>
-
-		<h4>Overall Rating: {% if overall_rating %}{{ overall_rating[0] }}{% else %}-{% endif %} / 5 ({% if overall_rating %}{{ overall_rating[1] }}{% else %}0{% endif %})</h4>
-
-		<h4>Goodread rating: {% if gread_rating %}{{ gread_rating['average_rating'] }}{% else %}-{% endif %} / 5 ({% if gread_rating %}{{ gread_rating['ratings_count'] }}{% else %}0{% endif %})</h4>
 		<div class="form-group">
-			<button name="buttonsrc" value="rate" class="btn btn-info">Rate</button>
+			<button name="buttonsrc" value="rate" class="btn btn-info"><i class="fas fa-star"></i> Rate</button>
 		</div>
+
+		<p>Your Rating: {% if user_rating %}{{ user_rating }}{% else %}-{% endif %} / 5</p>
+
+		<p>Overall Rating: {% if overall_rating %}{{ overall_rating[0] }}{% else %}-{% endif %} / 5 ({% if overall_rating %}{{ overall_rating[1] }}{% else %}0{% endif %})</p>
+
+		<p>Goodread rating: {% if gread_rating %}{{ gread_rating['average_rating'] }}{% else %}-{% endif %} / 5 ({% if gread_rating %}{{ gread_rating['ratings_count'] }}{% else %}0{% endif %})</p>
 
 		</br>
 
-		<h3>Reviews</h3>
+		<h4>Reviews</h4>
 		{% if not user_review %}
 		<div class="form-group">
-			<h4>Share your review</h4>
+			<h5>Share your review</h5>
 			<textarea class="form-control" id="user_review" name="user_review" rows="3" cols="50"></textarea>
 		</div>
 		<div class="form-group">
@@ -51,30 +52,27 @@ Online Book Review
 		</div>
 		{% else %}
 		<h4>Your Review: </h4>
-		<div class="well"rows="3" cols="50">{{ user_review }}</div>
+		<div class="card card-body bg-light">{{ user_review }}</div>
+		<br>
 		<div class="form-group pull-right">
-			<button name="buttonsrc" value="deletereview" class="btn btn-danger	glyphicon glyphicon-trash "></button>
+			<button name="buttonsrc" value="deletereview" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
 		</div>
 		{% endif %}
 		</br>
 		{% if overall_reviews %}
-		<h4>Total Reviews: {{ overall_reviews | count }}</h4>
+		<h5><b>Total Reviews: {{ overall_reviews | count }}</b></h5>
 
 	{% for review in overall_reviews %}
-		<div class="col-sm-2">
-			<div class="thumbnail">
-				<img class="img-responsive user-photo" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png">
-			</div>
-		</div>
-		<div class="col-sm-10">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<strong>{{review[0]}}</strong>
+		<div>
+			<div class="card">
+				<div class="card-header">
+					<strong><i class="fas fa-comment-dots"></i> {{review[0]}}</strong>
 				</div>
-				<div class="panel-body">
+				<div class="card-body">
 					{{review[1]}}
 				</div>
 			</div>
+			<br>
 		</div>
 
 			{% endfor %}
