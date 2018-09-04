@@ -2,8 +2,8 @@
 <html>
     <head>
         <title>{% block title %}{% endblock %}</title>
-          <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> -->
-          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+          <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> -->
           <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
           <link rel="stylesheet" href="{{ url_for('static', filename='css/mystyles.css') }}">
 
@@ -19,15 +19,18 @@
         <form action="" method="post">
           <div class="form-group">
             <div class="row">
-                <div class="col col-sm-1">
-                  <a href="{{ url_for('index') }}" class="btn btn-primary">
+                <div class="col-xs-1">
+                <!-- <div class="col col-sm-1"> -->
+                  <a href="{{ url_for('index') }}" class="btn btn-dark">
                     <i class="fa fa-home" aria-hidden="true"></i> Home </a>
                 </div>
-                <div class="col col-sm-8">
-                  <a href="{{ url_for('booksearch') }}" class="btn btn-info">
+                <div class="col-xs-1">
+                <!-- <div class="col col-sm-8"> -->
+                  <a href="{{ url_for('booksearch') }}" class="btn btn-dark">
                     <i class="fa fa-search" aria-hidden="true"></i> Search </a>
                 </div>
-                <div class="col col-sm-1 text-right">
+                <div class="col text-right">
+                <!-- <div class="col col-sm-1 text-right"> -->
                   {% if session['logged_in_name'] %}
                     <i class="fa fa-user-circle-o" aria-hidden="true"></i><strong> {{session['logged_in_name']}} </strong>
                   {% else %}
@@ -35,7 +38,8 @@
                   {% endif %}
                 </div>
                 {% if session['logged_in'] %}
-                <div class="pull-right">
+                <div class="col-xs-1 pull-right">
+                <!-- <div class="pull-right"> -->
                   <a href="{{ url_for('logout') }}" class="btn btn-danger">
                     <span class="glyphicon glyphicon-off"></span> Logout </a>
                 </div>
