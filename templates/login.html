@@ -9,7 +9,6 @@
 <form action="{{ url_for('login')}}" method="post">
 		<div class="container">
 					<div class="login-form">
-						<div class="main-div">
 						   <h4>User Login</h4>
 						    <form id="Login">
 						        <div class="form-group">
@@ -19,13 +18,12 @@
 						            <input type="password" class="form-control" name="password" placeholder="Password">
 						        </div>
 
-						        <button  class="btn btn-primary">Login</button>
+						        <button  class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Login</button>
 
 										<div class="register">
 											<a href="{{ url_for('register')}}">Register here</a>
 										</div>
 						    </form>
-						    </div>
 						</div>
 			</div>
 </form>
