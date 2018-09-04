@@ -9,6 +9,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from flask_sqlalchemy import SQLAlchemy
 
+from functools import wraps
+
 
 
 app = Flask(__name__)
@@ -33,6 +35,23 @@ Session(app)
 # goodread
 goodread_key = os.getenv("key")
 
+# taken from flask webpage decorators
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session['logged_in'] is None or not session['logged_in']:
+            return redirect(url_for('login', next=request.url))
+        return f(*args, **kwargs)
+    return decorated_function
+
+def logout_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session['logged_in'] :
+            return render_template('error.html', message = "User already logged in!")
+        return f(*args, **kwargs)
+    return decorated_function
+
 @app.before_request
 def before_request():
     try:
@@ -40,33 +59,30 @@ def before_request():
             session['logged_in'] = False
     except:
         session['logged_in'] = False
-    if request.method == "POST":
-        if request.form.get('btn_home'):
-            return render_template('index.html')
-        if request.form.get('btn_search'):
-            if session['logged_in']:
-                return render_template('booksearch.html')
-            else:
-                return render_template('index.html')
-        if request.form.get('btn_logout'):
-            return redirect(url_for('logout'))
-    if not session['logged_in']:
-        if request.endpoint not in ['index', 'login', 'register']:
-            return render_template('index.html')
-    else:
-        if request.endpoint in ['login', 'register']:
-             return render_template('index.html')
+    # if request.method == "POST":
+    #     if request.form.get('btn_home'):
+    #         return render_template('index.html')
+    #     if request.form.get('btn_search'):
+    #         if session['logged_in']:
+    #             return render_template('booksearch.html')
+    #         else:
+    #             return render_template('index.html')
+    #     if request.form.get('btn_logout'):
+    #         return redirect(url_for('logout'))
+    # if not session['logged_in']:
+    #     if request.endpoint not in ['index', 'login', 'register']:
+    #         return render_template('index.html')
+    # else:
+    #     if request.endpoint in ['login', 'register']:
+    #          return render_template('index.html')
 
 
 @app.route('/', methods = ['GET', 'POST'])
 def index():
     return render_template('index.html')
 
-# @app.route('/home', methods = ['GET', 'POST'])
-# def home():
-#     return render_template('index.html')
-
 @app.route("/login", methods = ["GET","POST"])
+@logout_required
 def login():
     if request.method == "POST":
         username = request.form.get('username')
@@ -76,17 +92,21 @@ def login():
         try:
             user_id = db.session.execute("SELECT id FROM users WHERE username = :username AND password_hash = :password_hash", {'username' : username, 'password_hash' : password_hash}).fetchone()[0]
             session['logged_in'] = user_id
+            session['logged_in_name'] = username
             return render_template('booksearch.html')
         except:
             return render_template('error.html', message = "Incorrect username or password")
     return render_template('login.html')
 
 @app.route("/logout")
+@login_required
 def logout():
     session['logged_in'] = False
+    session['logged_in_name'] = False
     return render_template('index.html')
 
 @app.route("/register", methods = ["GET", "POST"])
+@logout_required
 def register():
     if session['logged_in']:
         return render_template('booksearch.html')
@@ -103,12 +123,14 @@ def register():
             db.session.commit()
             user_id = db.session.execute("SELECT id FROM users WHERE username = :username", {'username' : username}).fetchone()[0]
             session['logged_in'] = user_id
+            session['logged_in_name'] = username
             return render_template('booksearch.html')
         except:
             return render_template("error.html", message = "User registration error")
     return render_template("register.html")
 
 @app.route("/booksearch", methods = ["GET", "POST"])
+@login_required
 def booksearch():
     if request.method == "POST":
         book_cols = ['isbn', 'title', 'author', 'year']
@@ -129,6 +151,7 @@ def booksearch():
         return render_template('booksearch.html', books = False)
 
 @app.route("/booksearch/<int:book_id>", methods = ["GET", "POST"])
+@login_required
 def Book(book_id):
     user_id = session['logged_in']
     gread_dict = {}
@@ -213,6 +236,7 @@ def Book(book_id):
     return render_template('bookinfo.html', book = book, user_rating = user_rating, overall_rating = overall_rating_list, user_review = user_review, overall_reviews = overall_reviews, gread_rating = gread_rating)
 
 @app.route("/booksearch/<int:book_id>/<string:book_col>")
+@login_required
 def Bookcol(book_id,book_col):
     book_cols = ['isbn', 'title', 'author', 'year']
     if book_col not in book_cols:
@@ -228,6 +252,7 @@ def Bookcol(book_id,book_col):
     return render_template('booksearch.html',books = books)
 
 @app.route("/api/<string:isbn_code>")
+@login_required
 def BookAPI(isbn_code):
     bookapi = {}
     try:
