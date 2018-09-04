@@ -10,8 +10,8 @@ Online Book Review
 	<h3 class="text-center"> Search Your Books</h3>
 	<form class="form-horizontal" action="{{ url_for('booksearch')}}" method="post">
 		<div class="form-group">
-			<label class="control-label col-sm-4">Search by Type:</label>
-					<div class="col-sm-6">
+			<label class="control-label col">Search by Type:</label>
+					<div class="col">
 						{% if books %}
 						<select class="form-control" name="searchcol">
 						{% else %}
@@ -25,14 +25,14 @@ Online Book Review
 					</div>
 		</div>
 		<div class="form-group">
-			<label class="control-label col-sm-4">Search by Name:</label>
-			<div class="col-sm-6">
+			<label class="control-label col">Search by Name:</label>
+			<div class="col">
 				<input class="form-control" name="searchtag" placeholder="Enter text here">
 			</div>
 		</div>
 		<div class="form-group">
- 		 <div class="col-sm-offset-4 col-sm-10">
- 			 <button type="submit" class="btn btn-success">Search</button>
+ 		 <div class="col">
+ 			 <button type="submit" class="btn btn-success"><i class="fas fa-search"></i> Search</button>
  		 </div>
  	 </div>
 	</form>
@@ -66,7 +66,7 @@ Online Book Review
 			<div class="form-group">
 	 		 <div class="up">
 	 			 <button type="submit" class="btn btn-success" autofocus
-				 >Reset</button>
+				 ><i class="fas fa-undo"></i> Reset</button>
 	 		 </div>
 	 	 	</div>
  		</form>
