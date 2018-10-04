@@ -121,10 +121,11 @@ def register():
         try:
             db.session.execute("INSERT INTO users (username, password_hash) VALUES (:username, :password_hash)", {'username' : username, 'password_hash' : password_hash})
             db.session.commit()
-            user_id = db.session.execute("SELECT id FROM users WHERE username = :username", {'username' : username}).fetchone()[0]
-            session['logged_in'] = user_id
-            session['logged_in_name'] = username
-            return render_template('booksearch.html')
+            return render_template('login.html', message = "Registration successful!")
+            # user_id = db.session.execute("SELECT id FROM users WHERE username = :username", {'username' : username}).fetchone()[0]
+            # session['logged_in'] = user_id
+            # session['logged_in_name'] = username
+            # return render_template('booksearch.html')
         except:
             return render_template("error.html", message = "User registration error")
     return render_template("register.html")

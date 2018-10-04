@@ -1,5 +1,4 @@
 import os
-import requests
 import hashlib
 import csv
 
