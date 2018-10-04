@@ -28,8 +28,29 @@ After creating database tables and importing data, the application can be starte
     source bashvars.sh
     flask run
   ```
-## File content
+## Contents
 The directory structure is shown below,
 ``` bash
-
+book2review/
+├── application.py # contains all the url definitions and functions
+├── bashvars.sh # contains environment vaiables necessary for this application to run
+├── books.csv # List of book information provided by CS50W
+├── import.py # Python file to be used to import data from books.csv to postgres database
+├── models.sql # postgres database table definitions and relations
+├── README.md # readme file
+├── requirements.txt # List of python requirements to be installed before running this application
+├── static # contains static files
+│   ├── css
+│   │   └── mystyles.css # custom css style definitions
+│   └── images
+│       └── 2.png # Image used in the application
+└── templates # contains all the html templates
+    ├── bookinfo.html # Individual book page
+    ├── booksearch.html # Search page
+    ├── error.html
+    ├── index.html
+    ├── info.html
+    ├── layout.html # html base layout
+    ├── login.html
+    └── register.html
 ```
