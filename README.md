@@ -7,7 +7,7 @@ This web page allows the users to register / login and search for books based on
 
 ## Download
 ``` bash
-git clone https://github.com/firaan1/book2review.git
+git clone https://github.com/firaan1/book2read.git
 ```
 ## Start **Book*2*Review**
 In order to setup the database, import data and start this app for the first time, please follow the instructions below,
