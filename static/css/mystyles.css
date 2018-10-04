@@ -48,9 +48,10 @@
 
 .cont-body{
   border-style: solid;
-  border-radius: 1px;
+  border-radius: 20px;
   border-color: #e5e5e5;
   background-color: #e5e5e5;
+  padding: 10px;
 }
 .tab{
   background-color: #f7f7f7;

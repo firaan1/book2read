@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title %}
+Book2Review Login
 {% endblock %}
 
 {% block body %}
@@ -8,7 +9,7 @@
 {{ message }}
 
 <form action="{{ url_for('login')}}" method="post">
-		<div class="container">
+		<div class="container col-6">
 					<div class="login-form">
 						   <h4>User Login</h4>
 						    <form id="Login">
@@ -19,7 +20,7 @@
 						            <input type="password" class="form-control" name="password" placeholder="Password">
 						        </div>
 
-						        <button  class="btn btn-success"><i class="fas fa-sign-in-alt"></i> Login</button>
+						        <button type="submit" class="btn btn-info"><i class="fas fa-sign-in-alt"></i> Login</button>
 
 										<div class="register">
 											<a href="{{ url_for('register')}}">Register here</a>

@@ -1,28 +1,30 @@
 {% extends "layout.html" %}
 
 {% block title %}
-Online Book Review
+Book2Review
 {% endblock %}
 
 {% block body %}
-<h1>Online Book Review</h1>
+<div class="container">
+	<h1>Book <img style="max-width:10vh;max-height:10vh" src="{{ url_for('static', filename='image/2.png') }}" alt="2"/> Review</h1>
 
-<ul>
-	<li>Search for your favorite books</li>
-	<li>Read reviews of available books</li>
-	<li>Share your personal opinions</li>
-</ul>
+	<ul>
+		<li>Search for your favorite books</li>
+		<li>Read reviews of available books</li>
+		<li>Share your personal opinions</li>
+	</ul>
 
-{{ a }}
-{% if session['logged_in'] %}
+	{{ a }}
+	{% if session['logged_in'] %}
 
 
-{% else %}
-<div>
-	<a href="/login" class="btn btn-success"><i class="fas fa-sign-in-alt"></i> Login</a>
-	<a href="/register" class="btn btn-warning"><i class="fas fa-plus"></i> Register</a>
-</div>
+	{% else %}
+	<div>
+		<a href="/login" class="btn btn-info"><i class="fas fa-sign-in-alt"></i> Login</a>
+		<a href="/register" class="btn btn-warning"><i class="fas fa-plus"></i> Register</a>
+	</div>
 
 {% endif %}
+</div>
 
 {% endblock %}
