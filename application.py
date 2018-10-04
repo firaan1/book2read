@@ -98,6 +98,92 @@ def login():
             return render_template('error.html', message = "Incorrect username or password")
     return render_template('login.html')
 
+@app.route('/deleteaccount', methods = ["GET", "POST"])
+@login_required
+def deleteaccount():
+    if request.method == "POST":
+        todo = request.form.get('todo')
+        if todo == "yes":
+            try:
+                user_id = session['logged_in']
+                session['logged_in'] = False
+                session['logged_in_name'] = False
+                db.session.execute("DELETE FROM ratings WHERE user_id = :user_id", {'user_id' : user_id})
+                db.session.execute("DELETE FROM reviews WHERE user_id = :user_id", {'user_id' : user_id})
+                db.session.execute("DELETE FROM users WHERE id = :user_id", {'user_id' : user_id})
+                db.session.commit()
+                return render_template('info.html', message = "User deleted successfully")
+            except:
+                return render_template('error.html', message = "Error in deleting user account")
+        return redirect(url_for('index'))
+    else:
+        return render_template('index.html', deleteaccount = "True")
+
+@app.route('/changepassword', methods = ["GET","POST"])
+def changepassword():
+    if request.method == "POST":
+        todo = request.form.get('todo')
+        if todo == "searchuser":
+            username = request.form.get('newusername')
+            try:
+                userquestion = db.session.execute("SELECT * FROM users WHERE username = :username", {'username' : username}).fetchone()[3]
+                return render_template('changepassword.html', message = userquestion, currentuser = username)
+            except:
+                return render_template('error.html', message = "User doesn't exist")
+        if todo == "searchanswer":
+            changevar = False
+            username = request.form.get('currentuser')
+            oldpassword = request.form.get('oldpassword')
+            answer = request.form.get('answer')
+            password = request.form.get('password')
+            password_retype = request.form.get('password_retype')
+            if not oldpassword and not answer:
+                return render_template('error.html', message = "Please enter a valid old password or the security answer")
+            elif oldpassword:
+                if len(oldpassword.strip()) == 0:
+                    return render_template('error.html', message = "Please enter a valid old password or the security answer")
+            elif answer:
+                if len(answer.strip()) == 0:
+                    return render_template('error.html', message = "Please enter a valid old password or the security answer")
+            if len(password.strip()) == 0:
+                return render_template('error.html', message = "New password should have atleast one character")
+            if oldpassword and len(oldpassword.strip()) > 0:
+                old_password_hash = hashlib.md5(oldpassword.encode('utf-8')).hexdigest()
+                try:
+                    user_id = db.session.execute("SELECT id FROM users WHERE username = :username AND password_hash = :password_hash", {'username' : username, 'password_hash' : old_password_hash}).fetchone()[0]
+                    changevar = True
+                except:
+                    changevar = False
+                    return render_template('error.html', message = "Incorrect old password")
+            elif answer and len(answer.strip()) > 0:
+                try:
+                    user_id = db.session.execute("SELECT id FROM users WHERE username = :username AND answer = :answer", {'username' : username, 'answer' : answer}).fetchone()[0]
+                    changevar = True
+                except:
+                    changevar = False
+                    return render_template('error.html', message = "Incorrect security answer")
+            else:
+                return render_template('error.html', message = "Please enter a valid old password or the security answer")
+            if changevar:
+                password_hash = hashlib.md5(password.encode('utf-8')).hexdigest()
+                try:
+                    db.session.execute("UPDATE users SET password_hash = :password_hash WHERE id = :user_id", {'user_id' : user_id, 'password_hash' : password_hash})
+                    db.session.commit()
+                    return render_template('info.html', message = "Password changed successfully!")
+                except:
+                    return render_template('error.html', message = "Error in updating new password")
+    else:
+        if session['logged_in']:
+            currentuser = session['logged_in_name']
+        else:
+            currentuser = False
+        try:
+            userquestion = db.session.execute("SELECT * FROM users WHERE username = :username", {'username' : str(session['logged_in_name'])}).fetchone()[3]
+            return render_template('changepassword.html', message = userquestion, currentuser = currentuser)
+        except:
+            pass
+    return render_template('changepassword.html')
+
 @app.route("/logout")
 @login_required
 def logout():
@@ -114,12 +200,25 @@ def register():
         username = request.form.get('username')
         password = request.form.get('password')
         password_retype = request.form.get('password_retype')
+        question = request.form.get('question')
+        answer = request.form.get('answer')
+        # check input strings
+        username_strip = username.strip()
+        if len(username_strip) == 0 or len(password.strip()) == 0 or len(question.strip()) == 0 or len(answer.strip()) == 0:
+            return render_template('error.html', message = "Username/password/security question/answer should not be an empty string")
+        if len(username_strip) != len(username):
+            return render_template('error.html', message = "Username should not contain white spaces")
+        # check if user exist
+        usercount = db.session.execute("SELECT COUNT(*) FROM users WHERE username = :username", {'username' : username}).fetchone()[0]
+        if usercount > 0:
+            return render_template('error.html', message = "User already exist")
         if not password == password_retype:
             return render_template('error.html', message = "Check retyping password")
         password_hash = hashlib.md5(password.encode('utf-8')).hexdigest()
         # adding user to DATABASE
         try:
-            db.session.execute("INSERT INTO users (username, password_hash) VALUES (:username, :password_hash)", {'username' : username, 'password_hash' : password_hash})
+            # db.session.execute("INSERT INTO users (username, password_hash) VALUES (:username, :password_hash)", {'username' : username, 'password_hash' : password_hash})
+            db.session.execute("INSERT INTO users (username, password_hash, question, answer) VALUES (:username, :password_hash, :question, :answer)", {'username' : username, 'password_hash' : password_hash, 'question': question, 'answer': answer})
             db.session.commit()
             return render_template('login.html', message = "Registration successful!")
             # user_id = db.session.execute("SELECT id FROM users WHERE username = :username", {'username' : username}).fetchone()[0]

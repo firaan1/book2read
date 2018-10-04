@@ -8,8 +8,10 @@ CREATE TABLE books (
 
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
-  username VARCHAR NOT NULL,
-  password_hash VARCHAR NOT NULL
+  username VARCHAR NOT NULL UNIQUE,
+  password_hash VARCHAR NOT NULL,
+  question VARCHAR NOT NULL,
+  answer VARCHAR NOT NULL
 );
 
 CREATE TABLE reviews (

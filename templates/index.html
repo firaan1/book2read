@@ -13,11 +13,26 @@ Book2Review
 		<li>Read reviews of available books</li>
 		<li>Share your personal opinions</li>
 	</ul>
-
-	{{ a }}
 	{% if session['logged_in'] %}
-
-
+	<div>
+		<a href="/changepassword" class="btn btn-warning">Change Password</a>
+		<a href="/deleteaccount" class="btn btn-danger">Delete account</a>
+		{% if deleteaccount %}
+		<div class="form-group up">
+			<h3>Are you sure?</h3>
+			<div style="display:flex">
+				<form action="{{ url_for('deleteaccount')}}" method="post">
+					<button type="submit" class="btn btn-danger">Yes</button>
+					<input type="hidden" name="todo" value="yes"/>
+				</form>
+				<form action="{{ url_for('deleteaccount')}}" method="post">
+					<button type="submit" class="btn btn-info">No</button>
+					<input type="hidden" name="todo" value="no"/>
+				</form>
+			</div>
+		</div>
+		{% endif %}
+	</div>
 	{% else %}
 	<div>
 		<a href="/login" class="btn btn-info"><i class="fas fa-sign-in-alt"></i> Login</a>
@@ -25,6 +40,7 @@ Book2Review
 	</div>
 
 {% endif %}
+
 </div>
 
 {% endblock %}
