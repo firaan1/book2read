@@ -293,5 +293,5 @@ def BookAPI(isbn_code):
     if bookapi:
         return str(bookapi)
     else:
-        abort(404)
+        # abort(404)
         return render_template('error.html', message = "Invalid ISBN Number"), 404

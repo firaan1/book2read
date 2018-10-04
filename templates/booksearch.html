@@ -50,17 +50,17 @@ Book2Review Search
 					<th>Year</th>
 				</tr>
 			</thead>
+			<tbody>
 			{% for book in books %}
-				<tbody>
 					<tr>
 						<td><a href="/booksearch/{{ book[0]}}">{{ book[1] }}</a></td>
 						<td><a href="/booksearch/{{ book[0] }}">{{ book[2] }}</td>
 						<td><a href="/booksearch/{{ book[0] }}/author">{{ book[3] }}</td>
 						<td><a href="/booksearch/{{ book[0] }}/year">{{ book[4] }}</td>
 					</tr>
-				</tbody>
 			{% endfor %}
-			</table>
+			</tbody>
+		</table>
 		</div>
 		<form action="{{ url_for('booksearch') }}">
 			<div class="form-group">

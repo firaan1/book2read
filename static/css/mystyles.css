@@ -57,7 +57,7 @@
   background-color: #f7f7f7;
 }
 thead{
-  background-color: #fff;
+  background-color: white;
 }
 .thumbnail {
     padding:0px;
@@ -88,5 +88,5 @@ thead{
 	border-width:8px;
 }
 
-.scrolltable { margin-top: 20px; height: 450px; overflow: auto; }
+.scrolltable { margin-top: 20px; max-height: 350px; overflow: auto; }
 th { text-align: left }
