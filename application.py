@@ -59,23 +59,6 @@ def before_request():
             session['logged_in'] = False
     except:
         session['logged_in'] = False
-    # if request.method == "POST":
-    #     if request.form.get('btn_home'):
-    #         return render_template('index.html')
-    #     if request.form.get('btn_search'):
-    #         if session['logged_in']:
-    #             return render_template('booksearch.html')
-    #         else:
-    #             return render_template('index.html')
-    #     if request.form.get('btn_logout'):
-    #         return redirect(url_for('logout'))
-    # if not session['logged_in']:
-    #     if request.endpoint not in ['index', 'login', 'register']:
-    #         return render_template('index.html')
-    # else:
-    #     if request.endpoint in ['login', 'register']:
-    #          return render_template('index.html')
-
 
 @app.route('/', methods = ['GET', 'POST'])
 def index():
@@ -217,14 +200,9 @@ def register():
         password_hash = hashlib.md5(password.encode('utf-8')).hexdigest()
         # adding user to DATABASE
         try:
-            # db.session.execute("INSERT INTO users (username, password_hash) VALUES (:username, :password_hash)", {'username' : username, 'password_hash' : password_hash})
             db.session.execute("INSERT INTO users (username, password_hash, question, answer) VALUES (:username, :password_hash, :question, :answer)", {'username' : username, 'password_hash' : password_hash, 'question': question, 'answer': answer})
             db.session.commit()
             return render_template('login.html', message = "Registration successful!")
-            # user_id = db.session.execute("SELECT id FROM users WHERE username = :username", {'username' : username}).fetchone()[0]
-            # session['logged_in'] = user_id
-            # session['logged_in_name'] = username
-            # return render_template('booksearch.html')
         except:
             return render_template("error.html", message = "User registration error")
     return render_template("register.html")
@@ -240,7 +218,6 @@ def booksearch():
         if searchcol not in book_cols:
             return render_template('error.html', message="Unknown access")
         try:
-            # books = db.session.execute('SELECT * FROM books WHERE LOWER((:searchcol)::text) LIKE :searchtag', {'searchcol' : searchcol, 'searchtag' : searchtag}).fetchone()
             books = db.session.execute(f"SELECT * FROM books WHERE LOWER(({searchcol})::text) LIKE :searchtag", {'searchtag' : searchtag }).fetchall()
             if not books:
                 return render_template('info.html', message = "Couldn't find your requested book")
@@ -263,7 +240,6 @@ def Book(book_id):
         if gread.status_code == 200:
             gread_dict = json.loads(gread.content)
         # our database
-        # overall_rating = db.session.execute("SELECT AVG(user_rating) FROM ratings WHERE book_id = :book_id", {'book_id' : book_id}).fetchone()[0]
         overall_rating = db.session.execute("SELECT AVG(user_rating),COUNT(user_rating) FROM ratings WHERE book_id = :book_id", {'book_id' : book_id}).fetchone()
         user_rating = db.session.execute("SELECT AVG(user_rating) FROM ratings WHERE book_id = :book_id AND user_id = :user_id", {'book_id' : book_id, 'user_id' : user_id}).fetchone()[0]
         if not overall_rating[0]:
@@ -316,7 +292,6 @@ def Book(book_id):
                     db.session.commit()
                 except:
                     return render_template('error.html', message = "Error in accessing books database")
-        # overall_rating = db.session.execute("SELECT user_rating FROM ratings WHERE book_id = :book_id", {'book_id' : book_id}).fetchone()[0]
         overall_rating = db.session.execute("SELECT AVG(user_rating), COUNT(user_rating) FROM ratings WHERE book_id = :book_id", {'book_id' : book_id}).fetchone()
         overall_reviews = db.session.execute("SELECT username, user_review FROM reviews JOIN users ON reviews.user_id = users.id WHERE book_id = :book_id", {'book_id' : book_id}).fetchall()
         if not overall_reviews:
@@ -392,5 +367,4 @@ def BookAPI(isbn_code):
     if bookapi:
         return str(bookapi)
     else:
-        # abort(404)
         return render_template('error.html', message = "Invalid ISBN Number"), 404

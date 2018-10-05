@@ -47,6 +47,7 @@ book2Read/
 └── templates # contains all the html templates
     ├── bookinfo.html # Individual book page
     ├── booksearch.html # Search page
+    ├── changepassword.html # html to change password
     ├── error.html
     ├── index.html
     ├── info.html

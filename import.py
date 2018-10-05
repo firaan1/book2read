@@ -29,7 +29,6 @@ def main():
         if isbn == "isbn":
             continue
         try:
-            # db_isbn = Booklist.query.filter_by(isbn = isbn).one()
             db_isbn = db.session.execute("SELECT * FROM books WHERE isbn = :isbn", {'isbn' : isbn}).fetchone()
             if str(isbn) == str(db_isbn.isbn):
                 print(f"Skipping Book --- {title} already exist")
