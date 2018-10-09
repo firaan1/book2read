@@ -1,4 +1,4 @@
-# Project 1: **Book*2*Read**
+# Project 1: **Books*2*Read**
 
 Web Programming with Python and JavaScript
 
@@ -7,9 +7,9 @@ This web page allows the users to register / login and search for books based on
 
 ## Download
 ``` bash
-git clone https://github.com/firaan1/book2read.git
+git clone https://github.com/firaan1/books2read.git
 ```
-## Start **Book*2*Read**
+## Start **Books*2*Read**
 In order to setup the database, import data and start this app for the first time, please follow the instructions below,
   ``` bash
     # Install required python packages from requirements.txt file
@@ -31,7 +31,7 @@ After creating database tables and importing data, the application can be starte
 ## Contents
 The directory structure is shown below,
 ``` bash
-book2Read/
+books2Read/
 ├── application.py # contains all the url definitions and functions
 ├── bashvars.sh # contains environment vaiables necessary for this application to run
 ├── books.csv # List of book information provided by CS50W
